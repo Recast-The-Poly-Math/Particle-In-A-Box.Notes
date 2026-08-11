@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Particle-In-A-Box.Notes</title>
+<style>
+  :root{
+    --bg:#0b1020;
+    --panel:#121933;
+    --panel2:#182142;
+    --text:#eef2ff;
+    --muted:#aeb8d6;
+    --accent:#7dd3fc;
+    --accent2:#c4b5fd;
+    --line:#2a3767;
+    --good:#86efac;
+  }
+
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:Inter,Segoe UI,Arial,sans-serif;
+    background:linear-gradient(180deg,#080c18,#0b1020 40%,#0f1730);
+    color:var(--text);
+    line-height:1.55;
+  }
+
+  .wrap{
+    width:min(1180px,94%);
+    margin:0 auto;
+    padding:28px 0 50px;
+  }
+
+  header{
+    padding:28px;
+    background:linear-gradient(135deg,rgba(125,211,252,.13),rgba(196,181,253,.10));
+    border:1px solid var(--line);
+    border-radius:22px;
+    margin-bottom:22px;
+  }
+
+  h1,h2,h3{margin-top:0}
+  h1{font-size:clamp(2rem,4vw,3.5rem);line-height:1.05}
+  h2{font-size:1.35rem}
+  h3{font-size:1rem;color:var(--accent)}
+  p{color:var(--muted)}
+
+  .tag{
+    display:inline-block;
+    padding:.35rem .7rem;
+    border:1px solid var(--line);
+    border-radius:999px;
+    color:var(--accent);
+    margin-bottom:14px;
+    font-size:.88rem;
+  }
+
+  .grid{
+    display:grid;
+    grid-template-columns:1.15fr .85fr;
+    gap:22px;
+  }
+
+  @media(max-width:900px){
+    .grid{grid-template-columns:1fr}
+  }
+
+  .card{
+    background:rgba(18,25,51,.93);
+    border:1px solid var(--line);
+    border-radius:18px;
+    padding:22px;
+    margin-bottom:22px;
+    box-shadow:0 16px 40px rgba(0,0,0,.16);
+  }
+
+  .equation{
+    background:#0b1126;
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:14px 16px;
+    margin:12px 0;
+    overflow-x:auto;
+    font-family:"Cambria Math","Times New Roman",serif;
+    color:#fff;
+    font-size:1.08rem;
+  }
+
+  .steps{
+    counter-reset:step;
+    display:grid;
+    gap:13px;
+  }
+  .step{
+    position:relative;
+    padding:15px 15px 15px 52px;
+    background:var(--panel2);
+    border:1px solid var(--line);
+    border-radius:14px;
+  }
+  .step::before{
+    counter-increment:step;
+    content:counter(step);
+    position:absolute;
+    left:14px;top:14px;
+    width:26px;height:26px;
+    display:grid;place-items:center;
+    border-radius:50%;
+    background:var(--accent);
+    color:#06111a;
+    font-weight:800;
+  }
+
+  .controls{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:12px;
+  }
+  @media(max-width:600px){
+    .controls{grid-template-columns:1fr}
+  }
+
+  label{
+    display:block;
+    font-size:.9rem;
+    color:var(--muted);
+    margin-bottom:6px;
+  }
+
+  input[type=range]{
+    width:100%;
+    accent-color:#7dd3fc;
+  }
+
+  .readout{
+    display:flex;
+    justify-content:space-between;
+    gap:12px;
+    padding:10px 12px;
+    background:#0b1126;
+    border-radius:10px;
+    border:1px solid var(--line);
+  }
+
+  canvas{
+    width:100%;
+    height:320px;
+    display:block;
+    background:#090e1e;
+    border:1px solid var(--line);
+    border-radius:14px;
+  }
+
+  .result{
+    font-size:1.08rem;
+    color:var(--good);
+    font-weight:700;
+  }
+
+  .mini{
+    font-size:.88rem;
+    color:var(--muted);
+  }
+
+  .footer-note{
+    text-align:center;
+    color:#8390b5;
+    margin-top:10px;
+    font-size:.9rem;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="tag">Quantum Mechanics • First Canonical Problem</div>
+  <h1>Particle-In-A-Box.Notes</h1>
+  <p>
+    Explore how the Schrödinger equation, boundary conditions, normalization,
+    and energy quantization fit together in one of the simplest quantum systems.
+  </p>
+</header>
+
+<div class="grid">
+  <main>
+
+    <section class="card">
+      <h2>1. Physical setup</h2>
+      <p>A particle of mass <strong>m</strong> is trapped between two perfectly rigid walls at x = 0 and x = L.</p>
+      <div class="equation">
+        V(x) = 0 for 0 &lt; x &lt; L, &nbsp;&nbsp; and &nbsp;&nbsp; V(x) = ∞ outside the box.
+      </div>
+      <p>
+        Because the particle cannot exist outside the walls, its wavefunction must vanish at the boundaries:
+      </p>
+      <div class="equation">ψ(0) = 0, &nbsp;&nbsp; ψ(L) = 0</div>
+    </section>
+
+    <section class="card">
+      <h2>2. Solve the Schrödinger equation</h2>
+      <div class="steps">
+        <div class="step">
+          Inside the box, V = 0:
+          <div class="equation">−(ℏ²/2m) ψ″(x) = E ψ(x)</div>
+        </div>
+
+        <div class="step">
+          Rearrange:
+          <div class="equation">ψ″(x) + k² ψ(x) = 0, &nbsp;&nbsp; k² = 2mE/ℏ²</div>
+        </div>
+
+        <div class="step">
+          General solution:
+          <div class="equation">ψ(x) = A sin(kx) + B cos(kx)</div>
+        </div>
+
+        <div class="step">
+          Apply ψ(0) = 0, which forces B = 0:
+          <div class="equation">ψ(x) = A sin(kx)</div>
+        </div>
+
+        <div class="step">
+          Apply ψ(L) = 0:
+          <div class="equation">sin(kL) = 0 ⇒ kL = nπ</div>
+          where n = 1, 2, 3, ...
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>3. Quantized energies</h2>
+      <p>Since kₙ = nπ/L, substitute into E = ℏ²k²/(2m):</p>
+      <div class="equation">
+        Eₙ = n²π²ℏ² / (2mL²)
+      </div>
+      <p>
+        Only discrete energies are allowed. The particle cannot have an arbitrary energy while remaining in a stationary state.
+      </p>
+    </section>
+
+    <section class="card">
+      <h2>4. Where does √(2/L) come from?</h2>
+      <p>
+        The differential equation leaves the amplitude A undetermined. Quantum mechanics fixes it using probability normalization:
+      </p>
+
+      <div class="equation">∫₀ᴸ |ψ(x)|² dx = 1</div>
+
+      <div class="steps">
+        <div class="step">
+          Substitute ψ(x) = A sin(nπx/L):
+          <div class="equation">A² ∫₀ᴸ sin²(nπx/L) dx = 1</div>
+        </div>
+
+        <div class="step">
+          The integral evaluates to:
+          <div class="equation">∫₀ᴸ sin²(nπx/L) dx = L/2</div>
+        </div>
+
+        <div class="step">
+          Therefore:
+          <div class="equation">A²(L/2) = 1 ⇒ A² = 2/L</div>
+        </div>
+
+        <div class="step">
+          Choose the usual positive real normalization:
+          <div class="equation">A = √(2/L)</div>
+        </div>
+      </div>
+
+      <p class="result">Normalized state: ψₙ(x) = √(2/L) sin(nπx/L)</p>
+    </section>
+
+    <section class="card">
+      <h2>5. Exponential form</h2>
+      <p>
+        Sines and cosines are equivalent to complex exponentials through Euler's formula.
+      </p>
+
+      <div class="equation">
+        e^(ikx) = cos(kx) + i sin(kx)
+      </div>
+
+      <div class="equation">
+        sin(kx) = [e^(ikx) − e^(−ikx)] / (2i)
+      </div>
+
+      <p>
+        Thus the standing-wave solution can also be viewed as a superposition of two complex traveling waves moving in opposite directions.
+      </p>
+    </section>
+
+  </main>
+
+  <aside>
+    <section class="card">
+      <h2>Interactive state viewer</h2>
+      <p>Change the quantum number n and box width L.</p>
+
+      <div class="controls">
+        <div>
+          <label for="nRange">Quantum number n</label>
+          <input id="nRange" type="range" min="1" max="8" value="1" step="1">
+        </div>
+        <div>
+          <label for="lRange">Box width L</label>
+          <input id="lRange" type="range" min="1" max="10" value="5" step="0.5">
+        </div>
+      </div>
+
+      <div style="height:12px"></div>
+
+      <div class="readout">
+        <span>n = <strong id="nOut">1</strong></span>
+        <span>L = <strong id="lOut">5.0</strong></span>
+      </div>
+
+      <div style="height:14px"></div>
+      <canvas id="waveCanvas" width="760" height="320"></canvas>
+
+      <p class="mini">
+        Solid curve: ψₙ(x). Dashed horizontal axis: ψ = 0. Vertical boundaries mark the infinite walls.
+      </p>
+    </section>
+
+    <section class="card">
+      <h2>Calculated quantities</h2>
+
+      <div class="equation" id="kEquation">k₁ = π / L</div>
+      <div class="equation" id="energyEquation">E₁ ∝ 1 / L²</div>
+      <div class="equation" id="normEquation">A = √(2/L)</div>
+
+      <p class="mini">
+        The energy display uses proportional form so the interface remains unit-independent.
+      </p>
+    </section>
+
+    <section class="card">
+      <h2>Main takeaway</h2>
+      <p>
+        The differential equation gives the family of possible wave shapes.
+        The boundary conditions select the allowed wavelengths.
+        Those wavelengths quantize the energy.
+        Finally, normalization fixes the amplitude.
+      </p>
+    </section>
+  </aside>
+</div>
+
+<div class="footer-note">
+  Self-contained educational GUI • HTML + CSS + small JavaScript visualization
+</div>
+
+</div>
+
+<script>
+const canvas = document.getElementById("waveCanvas");
+const ctx = canvas.getContext("2d");
+const nRange = document.getElementById("nRange");
+const lRange = document.getElementById("lRange");
+
+function draw(){
+  const n = Number(nRange.value);
+  const L = Number(lRange.value);
+
+  document.getElementById("nOut").textContent = n;
+  document.getElementById("lOut").textContent = L.toFixed(1);
+
+  document.getElementById("kEquation").textContent =
+    `k_${n} = ${n}π / ${L.toFixed(1)}`;
+
+  document.getElementById("energyEquation").textContent =
+    `E_${n} ∝ ${n*n} / ${L.toFixed(1)}²`;
+
+  document.getElementById("normEquation").textContent =
+    `A = √(2/${L.toFixed(1)}) = ${Math.sqrt(2/L).toFixed(4)}`;
+
+  const w = canvas.width;
+  const h = canvas.height;
+  const pad = 42;
+  const mid = h/2;
+  const amp = h*0.34;
+
+  ctx.clearRect(0,0,w,h);
+
+  // background
+  ctx.fillStyle = "#090e1e";
+  ctx.fillRect(0,0,w,h);
+
+  // axis
+  ctx.strokeStyle = "#53618f";
+  ctx.setLineDash([7,7]);
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(pad,mid);
+  ctx.lineTo(w-pad,mid);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // walls
+  ctx.strokeStyle = "#c4b5fd";
+  ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.moveTo(pad,28);
+  ctx.lineTo(pad,h-28);
+  ctx.moveTo(w-pad,28);
+  ctx.lineTo(w-pad,h-28);
+  ctx.stroke();
+
+  // wavefunction
+  ctx.strokeStyle = "#7dd3fc";
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+
+  const A = Math.sqrt(2/L);
+
+  for(let i=0;i<=600;i++){
+    const xNorm = i/600;
+    const x = xNorm * L;
+    const psi = A*Math.sin(n*Math.PI*x/L);
+
+    // normalize visual amplitude independently so every state is easy to inspect
+    const y = mid - (psi/A)*amp;
+    const px = pad + xNorm*(w-2*pad);
+
+    if(i===0) ctx.moveTo(px,y);
+    else ctx.lineTo(px,y);
+  }
+  ctx.stroke();
+
+  // labels
+  ctx.fillStyle = "#aeb8d6";
+  ctx.font = "16px Segoe UI";
+  ctx.fillText("x = 0", pad-18, h-8);
+  ctx.fillText("x = L", w-pad-18, h-8);
+  ctx.fillText(`ψ_${n}(x)`, pad+12, 28);
+}
+
+nRange.addEventListener("input", draw);
+lRange.addEventListener("input", draw);
+draw();
+</script>
+</body>
+</html>
