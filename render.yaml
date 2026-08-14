@@ -5,3 +5,10 @@ services:
     plan: free
     rootDir: guess-game-server
     autoDeployTrigger: commit
+
+  - type: web
+    name: rock-paper-scissors
+    runtime: docker
+    plan: free
+    rootDir: rock-paper-scissors-server
+    autoDeployTrigger: commit
