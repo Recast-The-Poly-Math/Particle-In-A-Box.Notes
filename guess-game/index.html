@@ -24,27 +24,12 @@
   <main class="card">
     <h1>Escape the Infinity Loop</h1>
     <p><strong>=== GUESS THE NUMBER ===</strong></p>
-    <p>Guess a number from 1 to 10. The game gives you <code>guess + secretNumber</code> as a hint, then you make your final guess. Enter <strong>0</strong> as the first guess to escape the loop.</p>
-
-    <div class="row" id="firstRow">
-      <input id="guess1" type="number" min="0" max="10" placeholder="First guess (0–10)" />
-      <button id="hintBtn">Get Hint</button>
-    </div>
-
-    <div class="row" id="secondRow" hidden>
-      <input id="guess2" type="number" min="1" max="10" placeholder="Final guess (1–10)" />
-      <button id="guessBtn">Guess Now!</button>
-    </div>
-
+    <p>Make a first guess from <strong>1 to 10</strong>. The game gives you <code>guess + secretNumber</code> as a hint, then you make your final guess.</p>
+    <div class="row"><input id="guess1" type="number" min="1" max="10" placeholder="First guess (1–10)" /><button id="hintBtn">Get Hint</button></div>
+    <div class="row" id="secondRow" hidden><input id="guess2" type="number" min="1" max="10" placeholder="Final guess (1–10)" /><button id="guessBtn">Guess Now!</button></div>
     <div id="output">Think How to Escape the Infinity Loop!!!</div>
-
-    <div class="row">
-      <button class="secondary" id="restartBtn">New Game</button>
-    </div>
-
-    <details>
-      <summary>Original C++ source</summary>
-      <pre><code>#include &lt;iostream&gt;
+    <div class="row"><button class="secondary" id="restartBtn">New Game</button></div>
+    <details><summary>Original C++ idea</summary><pre><code>#include &lt;iostream&gt;
 #include &lt;random&gt;
 using namespace std;
 
@@ -52,112 +37,45 @@ int main() {
     random_device rd;
     mt19937 generator(rd());
     uniform_int_distribution&lt;int&gt; randomNumber(1, 10);
-
     int secretNumber = randomNumber(generator);
-    int guess = -1;
-    int hint;
-    int guess2;
+    int guess, hint, guess2;
 
-    while (guess != 0) {
-        cout &lt;&lt; "Think How to Escape the Infinity Loop!!!" &lt;&lt; endl;
-        cout &lt;&lt; "=== GUESS THE NUMBER ===\n";
-        cout &lt;&lt; "Guess a number from 1 to 10: ";
+    cout &lt;&lt; "Guess a number from 1 to 10: ";
+    cin &gt;&gt; guess;
+    hint = guess + secretNumber;
+    cout &lt;&lt; "My first output: " &lt;&lt; hint &lt;&lt; endl;
+    cout &lt;&lt; "Guess now: ";
+    cin &gt;&gt; guess2;
 
-        cin &gt;&gt; guess;
-        if (guess == 0) break;
-
-        hint = guess + secretNumber;
-        cout &lt;&lt; endl &lt;&lt; "My first output: " &lt;&lt; hint &lt;&lt; endl;
-
-        cout &lt;&lt; "Guess now!" &lt;&lt; endl;
-        cin &gt;&gt; guess2;
-
-        if (guess2 == secretNumber)
-            cout &lt;&lt; "You win!\n";
-        else
-            cout &lt;&lt; "You lose. The number was " &lt;&lt; secretNumber &lt;&lt; ".\n";
-
-        secretNumber = randomNumber(generator);
-    }
-
+    if (guess2 == secretNumber) cout &lt;&lt; "You win!\n";
+    else cout &lt;&lt; "You lose. The number was " &lt;&lt; secretNumber &lt;&lt; ".\n";
     return 0;
-}</code></pre>
-    </details>
+}</code></pre></details>
   </main>
-
   <script>
     let secretNumber = randomNumber();
-    let firstGuess = null;
-
     const guess1 = document.getElementById('guess1');
     const guess2 = document.getElementById('guess2');
     const secondRow = document.getElementById('secondRow');
     const output = document.getElementById('output');
-
-    function randomNumber() {
-      return Math.floor(Math.random() * 10) + 1;
-    }
-
-    function resetRound() {
-      secretNumber = randomNumber();
-      firstGuess = null;
-      guess1.value = '';
-      guess2.value = '';
-      secondRow.hidden = true;
-      output.textContent = 'Think How to Escape the Infinity Loop!!!';
-      guess1.focus();
-    }
-
-    document.getElementById('hintBtn').addEventListener('click', () => {
-      firstGuess = Number(guess1.value);
-
-      if (!Number.isInteger(firstGuess) || firstGuess < 0 || firstGuess > 10) {
-        output.textContent = 'Enter a whole number from 0 to 10.';
-        return;
-      }
-
-      if (firstGuess === 0) {
-        output.textContent = 'You escaped the infinity loop!';
-        secondRow.hidden = true;
-        return;
-      }
-
-      const hint = firstGuess + secretNumber;
-      output.textContent = `My first output: ${hint}\n\nGuess now!`;
-      secondRow.hidden = false;
-      guess2.focus();
+    function randomNumber(){ return Math.floor(Math.random()*10)+1; }
+    function resetRound(){ secretNumber=randomNumber(); guess1.value=''; guess2.value=''; secondRow.hidden=true; output.textContent='Think How to Escape the Infinity Loop!!!'; guess1.focus(); }
+    document.getElementById('hintBtn').addEventListener('click',()=>{
+      const firstGuess=Number(guess1.value);
+      if(!Number.isInteger(firstGuess)||firstGuess<1||firstGuess>10){ output.textContent='Enter a whole number from 1 to 10.'; return; }
+      const hint=firstGuess+secretNumber;
+      output.textContent=`My first output: ${hint}\n\nGuess now!`;
+      secondRow.hidden=false; guess2.focus();
     });
-
-    document.getElementById('guessBtn').addEventListener('click', () => {
-      const finalGuess = Number(guess2.value);
-
-      if (!Number.isInteger(finalGuess) || finalGuess < 1 || finalGuess > 10) {
-        output.textContent += '\n\nEnter a final whole-number guess from 1 to 10.';
-        return;
-      }
-
-      if (finalGuess === secretNumber) {
-        output.textContent = `You win! The number was ${secretNumber}.\n\nA new secret number has been generated.`;
-      } else {
-        output.textContent = `You lose. The number was ${secretNumber}.\n\nA new secret number has been generated.`;
-      }
-
-      secretNumber = randomNumber();
-      firstGuess = null;
-      guess1.value = '';
-      guess2.value = '';
-      secondRow.hidden = true;
+    document.getElementById('guessBtn').addEventListener('click',()=>{
+      const finalGuess=Number(guess2.value);
+      if(!Number.isInteger(finalGuess)||finalGuess<1||finalGuess>10){ output.textContent+='\n\nEnter a final whole-number guess from 1 to 10.'; return; }
+      output.textContent=finalGuess===secretNumber ? `You win! The number was ${secretNumber}.\n\nA new secret number has been generated.` : `You lose. The number was ${secretNumber}.\n\nA new secret number has been generated.`;
+      secretNumber=randomNumber(); guess1.value=''; guess2.value=''; secondRow.hidden=true;
     });
-
-    document.getElementById('restartBtn').addEventListener('click', resetRound);
-
-    guess1.addEventListener('keydown', e => {
-      if (e.key === 'Enter') document.getElementById('hintBtn').click();
-    });
-
-    guess2.addEventListener('keydown', e => {
-      if (e.key === 'Enter') document.getElementById('guessBtn').click();
-    });
+    document.getElementById('restartBtn').addEventListener('click',resetRound);
+    guess1.addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('hintBtn').click();});
+    guess2.addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('guessBtn').click();});
   </script>
 </body>
 </html>
