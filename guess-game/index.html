@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Escape the Infinity Loop</title>
+  <style>
+    :root { color-scheme: dark; }
+    body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: #0d1117; color: #e6edf3; font-family: system-ui, sans-serif; }
+    .card { width: min(92vw, 680px); background: #161b22; border: 1px solid #30363d; border-radius: 18px; padding: 28px; box-shadow: 0 16px 50px rgba(0,0,0,.35); }
+    h1 { margin-top: 0; font-size: clamp(1.8rem, 5vw, 2.8rem); }
+    p { line-height: 1.55; }
+    .row { display: flex; gap: 10px; flex-wrap: wrap; margin: 14px 0; }
+    input { flex: 1 1 180px; padding: 12px 14px; border-radius: 10px; border: 1px solid #30363d; background: #0d1117; color: #e6edf3; font-size: 1rem; }
+    button { padding: 12px 16px; border: 0; border-radius: 10px; background: #238636; color: white; font-weight: 700; cursor: pointer; }
+    button.secondary { background: #30363d; }
+    #output { min-height: 120px; white-space: pre-line; padding: 16px; border-radius: 12px; background: #0d1117; border: 1px solid #30363d; }
+    details { margin-top: 18px; }
+    pre { overflow-x: auto; background: #0d1117; border: 1px solid #30363d; padding: 14px; border-radius: 12px; }
+    code { color: #79c0ff; }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <h1>Escape the Infinity Loop</h1>
+    <p><strong>=== GUESS THE NUMBER ===</strong></p>
+    <p>Guess a number from 1 to 10. The game gives you <code>guess + secretNumber</code> as a hint, then you make your final guess. Enter <strong>0</strong> as the first guess to escape the loop.</p>
+
+    <div class="row" id="firstRow">
+      <input id="guess1" type="number" min="0" max="10" placeholder="First guess (0–10)" />
+      <button id="hintBtn">Get Hint</button>
+    </div>
+
+    <div class="row" id="secondRow" hidden>
+      <input id="guess2" type="number" min="1" max="10" placeholder="Final guess (1–10)" />
+      <button id="guessBtn">Guess Now!</button>
+    </div>
+
+    <div id="output">Think How to Escape the Infinity Loop!!!</div>
+
+    <div class="row">
+      <button class="secondary" id="restartBtn">New Game</button>
+    </div>
+
+    <details>
+      <summary>Original C++ source</summary>
+      <pre><code>#include &lt;iostream&gt;
+#include &lt;random&gt;
+using namespace std;
+
+int main() {
+    random_device rd;
+    mt19937 generator(rd());
+    uniform_int_distribution&lt;int&gt; randomNumber(1, 10);
+
+    int secretNumber = randomNumber(generator);
+    int guess = -1;
+    int hint;
+    int guess2;
+
+    while (guess != 0) {
+        cout &lt;&lt; "Think How to Escape the Infinity Loop!!!" &lt;&lt; endl;
+        cout &lt;&lt; "=== GUESS THE NUMBER ===\n";
+        cout &lt;&lt; "Guess a number from 1 to 10: ";
+
+        cin &gt;&gt; guess;
+        if (guess == 0) break;
+
+        hint = guess + secretNumber;
+        cout &lt;&lt; endl &lt;&lt; "My first output: " &lt;&lt; hint &lt;&lt; endl;
+
+        cout &lt;&lt; "Guess now!" &lt;&lt; endl;
+        cin &gt;&gt; guess2;
+
+        if (guess2 == secretNumber)
+            cout &lt;&lt; "You win!\n";
+        else
+            cout &lt;&lt; "You lose. The number was " &lt;&lt; secretNumber &lt;&lt; ".\n";
+
+        secretNumber = randomNumber(generator);
+    }
+
+    return 0;
+}</code></pre>
+    </details>
+  </main>
+
+  <script>
+    let secretNumber = randomNumber();
+    let firstGuess = null;
+
+    const guess1 = document.getElementById('guess1');
+    const guess2 = document.getElementById('guess2');
+    const secondRow = document.getElementById('secondRow');
+    const output = document.getElementById('output');
+
+    function randomNumber() {
+      return Math.floor(Math.random() * 10) + 1;
+    }
+
+    function resetRound() {
+      secretNumber = randomNumber();
+      firstGuess = null;
+      guess1.value = '';
+      guess2.value = '';
+      secondRow.hidden = true;
+      output.textContent = 'Think How to Escape the Infinity Loop!!!';
+      guess1.focus();
+    }
+
+    document.getElementById('hintBtn').addEventListener('click', () => {
+      firstGuess = Number(guess1.value);
+
+      if (!Number.isInteger(firstGuess) || firstGuess < 0 || firstGuess > 10) {
+        output.textContent = 'Enter a whole number from 0 to 10.';
+        return;
+      }
+
+      if (firstGuess === 0) {
+        output.textContent = 'You escaped the infinity loop!';
+        secondRow.hidden = true;
+        return;
+      }
+
+      const hint = firstGuess + secretNumber;
+      output.textContent = `My first output: ${hint}\n\nGuess now!`;
+      secondRow.hidden = false;
+      guess2.focus();
+    });
+
+    document.getElementById('guessBtn').addEventListener('click', () => {
+      const finalGuess = Number(guess2.value);
+
+      if (!Number.isInteger(finalGuess) || finalGuess < 1 || finalGuess > 10) {
+        output.textContent += '\n\nEnter a final whole-number guess from 1 to 10.';
+        return;
+      }
+
+      if (finalGuess === secretNumber) {
+        output.textContent = `You win! The number was ${secretNumber}.\n\nA new secret number has been generated.`;
+      } else {
+        output.textContent = `You lose. The number was ${secretNumber}.\n\nA new secret number has been generated.`;
+      }
+
+      secretNumber = randomNumber();
+      firstGuess = null;
+      guess1.value = '';
+      guess2.value = '';
+      secondRow.hidden = true;
+    });
+
+    document.getElementById('restartBtn').addEventListener('click', resetRound);
+
+    guess1.addEventListener('keydown', e => {
+      if (e.key === 'Enter') document.getElementById('hintBtn').click();
+    });
+
+    guess2.addEventListener('keydown', e => {
+      if (e.key === 'Enter') document.getElementById('guessBtn').click();
+    });
+  </script>
+</body>
+</html>
