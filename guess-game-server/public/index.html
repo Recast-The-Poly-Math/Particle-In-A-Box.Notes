@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Escape the Infinity Loop — C++</title>
+<style>
+body{margin:0;min-height:100vh;background:#000;color:#ddd;font:18px "Courier New",monospace;display:grid;place-items:center}.terminal{width:min(90vw,800px);border:2px solid #777;padding:24px;box-sizing:border-box}.title{border-bottom:1px solid #555;padding-bottom:10px;margin-bottom:20px}textarea{width:100%;height:100px;box-sizing:border-box;background:#050505;color:#fff;border:1px solid #777;font:inherit;padding:10px}button{background:#111;color:#fff;border:1px solid #777;padding:8px 14px;margin:10px 8px 10px 0;font:inherit;cursor:pointer}pre{white-space:pre-wrap;min-height:180px;border-top:1px solid #444;padding-top:15px}
+</style>
+</head>
+<body>
+<main class="terminal">
+<div class="title">C++ :: Escape the Infinity Loop</div>
+<p>This page sends numeric stdin to the compiled C++ game.</p>
+<p>Enter input one value per line. Example: first guess, then final guess. Enter 0 to reveal the secret and escape.</p>
+<textarea id="input" placeholder="5&#10;7"></textarea>
+<br>
+<button id="compile">COMPILE C++</button>
+<button id="run">RUN GAME</button>
+<pre id="output">Ready.</pre>
+</main>
+<script>
+const output=document.getElementById('output');
+document.getElementById('compile').onclick=async()=>{output.textContent='Compiling...';const r=await fetch('/api/compile',{method:'POST'});const j=await r.json();output.textContent=j.output;};
+document.getElementById('run').onclick=async()=>{output.textContent='Running...';const r=await fetch('/api/run',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({input:document.getElementById('input').value+'\n'})});const j=await r.json();output.textContent=j.output;};
+</script>
+</body>
+</html>
