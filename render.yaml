@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: guessing-game
+    runtime: docker
+    plan: free
+    rootDir: guess-game-server
+    autoDeployTrigger: commit
