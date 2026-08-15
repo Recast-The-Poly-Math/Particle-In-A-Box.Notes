@@ -12,3 +12,10 @@ services:
     plan: free
     rootDir: rock-paper-scissors-server
     autoDeployTrigger: commit
+
+  - type: web
+    name: coin-numerical-lab
+    runtime: docker
+    plan: free
+    rootDir: coin-lab-server
+    autoDeployTrigger: commit
