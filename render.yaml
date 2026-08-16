@@ -19,3 +19,10 @@ services:
     plan: free
     rootDir: coin-lab-server
     autoDeployTrigger: commit
+
+  - type: web
+    name: greek-keys
+    runtime: docker
+    plan: free
+    rootDir: greek-keys-server
+    autoDeployTrigger: commit
